@@ -1,0 +1,10 @@
+.popup__figure {
+  margin: 0;
+  max-width: 75vw;
+  max-height: 75vh;
+  position: relative;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}

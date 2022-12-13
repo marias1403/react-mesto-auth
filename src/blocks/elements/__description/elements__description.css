@@ -1,0 +1,8 @@
+.elements__description {
+  padding: 27px 20px;
+  display: grid;
+  grid-template-columns: 1fr 22px;
+  justify-items: start;
+  align-items: center;
+  column-gap: 20px;
+}

@@ -1,0 +1,11 @@
+.content {
+  display: grid;
+  flex-shrink: 0;
+  grid-row-gap: 50px;
+}
+
+@media screen and (max-width: 420px) {
+  .content {
+    grid-row-gap: 36px;
+  }
+}
