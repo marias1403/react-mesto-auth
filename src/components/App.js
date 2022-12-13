@@ -24,7 +24,7 @@ function App() {
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('jwt') !== null);
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -41,8 +41,11 @@ function App() {
     if (localStorage.getItem('jwt')) {
       auth.getUserData(localStorage.getItem('jwt'))
         .then((userData) => {
-          setIsLoggedIn(true);
-          setUserData(userData);
+          if (userData) {
+            setUserData(userData);
+          } else {
+            setIsLoggedIn(false);
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -165,22 +168,6 @@ function App() {
             userData={userData}
           />
           <Switch>
-            <Route exact path="/">
-              <ProtectedRoute
-                path="/"
-                loggedIn={isLoggedIn}
-                component={Main}
-                childProps={{
-                  "cards": cards,
-                  "onCardLike": handleCardLike,
-                  "onCardDelete": handleCardDelete,
-                  "onEditProfile": handleEditProfileClick,
-                  "onAddPlace": handleAddPlaceClick,
-                  "onEditAvatar": handleEditAvatarClick,
-                  "onCardClick": handleCardClick
-                }}
-              />
-            </Route>
             <Route path="/sign-in">
               <Login
                 handleLogin={handleLogin}
@@ -191,9 +178,20 @@ function App() {
                 onRegister={handleRegisterSubmit}
               />
             </Route>
-            <Route path="/">
-              {isLoggedIn ? <Redirect to="/" /> : <Redirect to="/login" />}
-            </Route>
+            <ProtectedRoute
+              path="/"
+              loggedIn={isLoggedIn}
+              component={Main}
+              childProps={{
+                "cards": cards,
+                "onCardLike": handleCardLike,
+                "onCardDelete": handleCardDelete,
+                "onEditProfile": handleEditProfileClick,
+                "onAddPlace": handleAddPlaceClick,
+                "onEditAvatar": handleEditAvatarClick,
+                "onCardClick": handleCardClick
+              }}
+            />
           </Switch>
           <Footer />
         </div>
