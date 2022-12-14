@@ -9,13 +9,13 @@ export const register = (email, password) => {
     },
     body: JSON.stringify({email, password})
   })
-    .then((response) => {
-      return response.json();
-    })
     .then((res) => {
-      return res;
+      if(!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+      return res.json();
     })
-    .catch((err) => console.log(err));
+    .then((res) => res.data);
 };
 
 export const authorize = (email, password) => {
@@ -27,8 +27,13 @@ export const authorize = (email, password) => {
     },
     body: JSON.stringify({email, password})
   })
-    .then((response => response.json()))
-    .catch(err => console.log(err))
+    .then((res) => {
+      if(!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((res) => res);
 };
 
 export const getUserData = (token) => {
@@ -40,7 +45,12 @@ export const getUserData = (token) => {
       'Authorization': `Bearer ${token}`,
     }
   })
-    .then(response => response.json())
-    .then(res => res.data)
-    .catch(err => console.log(err))
+    .then((res) => {
+      console.log(res);
+      if(!res.ok) {
+        return Promise.reject(`Ошибка: ${res.status}`);
+      }
+      return res.json();
+    })
+    .then((res) => res.data);
 };

@@ -1,14 +1,11 @@
 import React, { useState } from "react";
-import { NavLink, useHistory } from "react-router-dom";
-import * as auth from '../auth.js';
+import { NavLink } from "react-router-dom";
 
 function Register(props) {
   const [data, setData] = useState({
     email: "",
     password: ""
   });
-
-  const history = useHistory();
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -20,15 +17,7 @@ function Register(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    auth.register(data.email, data.password)
-      .then((res) => {
-        if(res) {
-          props.onRegister(true);
-          history.push("/sign-in")
-        } else {
-          props.onRegister(false);
-        }
-    })
+    props.onRegister(data.email, data.password);
   }
 
   return (

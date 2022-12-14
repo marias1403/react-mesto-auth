@@ -13,7 +13,7 @@ function InfoTooltip(props) {
     }} className={`popup ${isOpen}`}>
       <div className="popup__container popup__container_type_info">
         <button onMouseDown={props.onClose} className="popup__close-button button"></button>
-        <img className="popup__image-info" src={img} alt={props.isSuccess ? "Успешная регистрация" : "Регистрация не прошла"}/>
+        <img className="popup__image-info" src={img} alt={props.isSuccess ? props.successText : props.failText}/>
         <h2 className="popup__heading popup__heading_type_info">
           {
             props.isSuccess

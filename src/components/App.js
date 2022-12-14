@@ -8,38 +8,42 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 import AddPlacePopup from "./AddPlacePopup";
-import {Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch, useHistory} from 'react-router-dom';
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
-import * as auth from '../auth.js';
+import * as auth from '../utils/auth.js';
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isInfoTooltipPopupOpen, setIsInfoTooltipPopupOpen] = useState(false);
-  const [isInfoTooltipPopupSuccess, setIsInfoTooltipPopupSuccess] = useState(false);
+  const [isInfoTooltipPopupSuccess, setIsInfoTooltipPopupSuccess] = useState(true);
   const [selectedCard, setSelectedCard] = useState(null);
   const [currentUser, setCurrentUser] = useState({});
   const [cards, setCards] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('jwt') !== null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
-    api.getInitialsCards()
-      .then(data => {
-        setCards(data.map((cardData) => (mapCardDataToState(cardData))))
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    if (isLoggedIn) {
+      api.getInitialsCards()
+        .then(data => {
+          setCards(data.map((cardData) => (mapCardDataToState(cardData))))
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
   }, [])
 
   useEffect(() => {
-    if (localStorage.getItem('jwt')) {
-      auth.getUserData(localStorage.getItem('jwt'))
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth.getUserData(jwt)
         .then((userData) => {
           if (userData) {
             setUserData(userData);
@@ -95,11 +99,13 @@ function App() {
   }
 
   useEffect(() => {
-    api.getUserInfo()
-      .then(user => setCurrentUser(user))
-      .catch((err) => {
-        console.log(err);
-      })
+    if (isLoggedIn) {
+      api.getUserInfo()
+        .then(user => setCurrentUser(user))
+        .catch((err) => {
+          console.log(err);
+        })
+    }
   }, [])
 
   function handleEditProfileClick() {
@@ -153,11 +159,44 @@ function App() {
       })
   }
 
-  function handleLogin(token) {
+  function handleRegister(email, password) {
+    auth.register(email, password)
+      .then((res) => {
+        if(res.data) {
+          handleRegisterSubmit(true);
+          history.push("/sign-in")
+        } else {
+          handleRegisterSubmit(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsInfoTooltipPopupSuccess(false);
+        setIsInfoTooltipPopupOpen(true);
+      })
+  }
+
+  function handleLogin(email, password) {
+    if (!email || !password){
+      return;
+    }
+    auth.authorize(email, password)
+      .then((res) => {
+        if(res.token) {
+          localStorage.setItem('jwt', res.token);
+          handleGetUserData(res.token);
+          history.push("/")
+        }
+      })
+      .catch((err) => console.log(err));
+  }
+
+  function handleGetUserData(token) {
     setIsLoggedIn(true);
-    auth.getUserData(token).then((userData) => {
-      setUserData(userData);
-    })
+    auth.getUserData(token)
+      .then((userData) => {
+        setUserData(userData);
+      })
   }
 
   return (
@@ -170,12 +209,12 @@ function App() {
           <Switch>
             <Route path="/sign-in">
               <Login
-                handleLogin={handleLogin}
+                onLogin={handleLogin}
               />
             </Route>
             <Route path="/sign-up">
               <Register
-                onRegister={handleRegisterSubmit}
+                onRegister={handleRegister}
               />
             </Route>
             <ProtectedRoute
@@ -218,6 +257,8 @@ function App() {
           isOpen={isInfoTooltipPopupOpen}
           onClose={closeAllPopups}
           isSuccess={isInfoTooltipPopupSuccess}
+          successText={"Успешная регистрация"}
+          failText={"Регистрация не прошла"}
         />
       </div>
     </CurrentUserContext.Provider>
