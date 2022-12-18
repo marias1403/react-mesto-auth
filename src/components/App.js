@@ -38,7 +38,7 @@ function App() {
           console.log(err);
         })
     }
-  }, [])
+  }, [isLoggedIn])
 
   useEffect(() => {
     const jwt = localStorage.getItem('jwt');
@@ -55,7 +55,7 @@ function App() {
           console.log(err);
         })
     }
-  }, [])
+  }, [isLoggedIn])
 
   function handleCardLike(card) {
     const isLiked = card.likes.some(i => i._id === currentUser._id);
@@ -120,9 +120,9 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   }
 
-  function handleRegisterSubmit(isSuccess) {
-    setIsInfoTooltipPopupOpen(true);
+  function handleAuthResult(isSuccess) {
     setIsInfoTooltipPopupSuccess(isSuccess);
+    setIsInfoTooltipPopupOpen(true);
   }
 
   function handleCardClick(card) {
@@ -162,17 +162,16 @@ function App() {
   function handleRegister(email, password) {
     auth.register(email, password)
       .then((res) => {
-        if(res.data) {
-          handleRegisterSubmit(true);
+        if(res) {
+          handleAuthResult(true);
           history.push("/sign-in")
         } else {
-          handleRegisterSubmit(false);
+          handleAuthResult(false);
         }
       })
       .catch((err) => {
         console.log(err);
-        setIsInfoTooltipPopupSuccess(false);
-        setIsInfoTooltipPopupOpen(true);
+        handleAuthResult(false);
       })
   }
 
@@ -186,9 +185,14 @@ function App() {
           localStorage.setItem('jwt', res.token);
           handleGetUserData(res.token);
           history.push("/")
+        } else {
+          handleAuthResult(false);
         }
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        handleAuthResult(false);
+      });
   }
 
   function handleGetUserData(token) {
