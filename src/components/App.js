@@ -46,6 +46,8 @@ function App() {
       auth.getUserData(jwt)
         .then((userData) => {
           if (userData) {
+            setIsLoggedIn(true);
+            history.push('/');
             setUserData(userData);
           } else {
             setIsLoggedIn(false);
@@ -106,7 +108,7 @@ function App() {
           console.log(err);
         })
     }
-  }, [])
+  }, [isLoggedIn])
 
   function handleEditProfileClick() {
     setIsEditProfilePopupOpen(true);
