@@ -1,7 +1,38 @@
-# Здесь будет ваш проект на Реакте с авторизацией и регистрацией
+# Проект Mesto
 
-Используйте ваши предыдущие наработки по проекту Mesto. Это может быть работа 11-го спринта или его улучшенная версия после 2-х последних спринтов. 
+### Ссылка на [сайт](https://marias1403.github.io/react-mesto-auth/)
 
-Все запросы на авторизацию, регистрацию и проверку токена должны работать через сервис `https://auth.nomoreparties.co`. Остальные запросы, не относящиеся к этой проектной работе могут быть к бэкенду из предыдущих спринтов.
+Проект «Mesto» — это интерактивная страница, куда можно добавлять фотографии, удалять их, ставить лайки, редактировать профиль. Также на странице реализована регистрация и авторизация.
 
-Успехов!
+### Стек:
+React, JavaScript, React, HTML, CSS
+
+### Фукциональность:
+Публикация постов на странице, регистрация, авторизация, возможность ставить лайк, удаление публикаций, редактирование профиля
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
